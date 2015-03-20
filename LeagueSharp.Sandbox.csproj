@@ -35,13 +35,16 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LeagueSharp.Loader.Service">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\LeagueSharp\System\LeagueSharp.Loader.Service.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Bootstrap.cs" />
-    <Compile Include="DomainProxy.cs" />
+    <Compile Include="Domain.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

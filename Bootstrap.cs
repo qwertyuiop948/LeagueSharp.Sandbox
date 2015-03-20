@@ -1,34 +1,47 @@
-﻿using System.Collections.Generic;
-using System.Runtime.InteropServices;
+﻿using System;
+using System.Diagnostics;
+using LeagueSharp.Loader.Service;
 
 namespace LeagueSharp.Sandbox
 {
     public class Bootstrap
     {
-        private static readonly List<string> LoadedAssemblies = new List<string>();
-        private static DomainProxy _mainDomainProxy;
-        private static ProcessInputDelegate _processInputDelegate;
+        private static Domain _applicationDomain;
 
-        public static void Init(string param)
+        public static void Init()
         {
-            
+            CreateApplicationDomain();
         }
 
-        private static void ProcessInput(ProcessAction action, string args)
+        public static bool Load()
         {
-            if (_mainDomainProxy == null)
+            if (_applicationDomain != null)
             {
-                _mainDomainProxy = DomainProxy.Create("LeagueSharp\\Sandbox");
+                var api = ServiceFactory.GetInterface<ILoaderService>();
+                try
+                {
+                    var assemblies = api.GetAssemblyList(Process.GetCurrentProcess().Id);
+                    foreach (var assembly in assemblies)
+                    {
+                        _applicationDomain.Load(assembly.PathToBinary, new string[0]);
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Sandbox.Bootstrap has encountered an error:");
+                    Console.WriteLine(e);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        private static void CreateApplicationDomain()
+        {
+            if (_applicationDomain == null)
+            {
+                _applicationDomain = Domain.CreateProxy("SandboxDomain");
             }
         }
-
-        [UnmanagedFunctionPointer(CallingConvention.StdCall, CharSet = CharSet.Unicode)]
-        private delegate void ProcessInputDelegate(ProcessAction action, string args);
-    }
-
-    public enum ProcessAction
-    {
-        Load,
-        Unload
     }
 }
