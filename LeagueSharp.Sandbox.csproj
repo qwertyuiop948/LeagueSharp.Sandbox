@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="Bootstrap.cs" />
     <Compile Include="Domain.cs" />
+    <Compile Include="Input.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
