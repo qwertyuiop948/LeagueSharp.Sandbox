@@ -16,7 +16,7 @@ namespace LeagueSharp.Sandbox
 
         public static uint ReloadAndRecompileKey
         {
-            get { return Config == null ? 0x76 : Config.ReloadKey; }
+            get { return Config == null ? 0x76 : Config.ReloadAndRecompileKey; }
         }
 
         public static uint ReloadKey
@@ -26,7 +26,7 @@ namespace LeagueSharp.Sandbox
 
         public static uint UnloadKey
         {
-            get { return Config == null ? 0x75 : Config.ReloadKey; }
+            get { return Config == null ? 0x75 : Config.UnloadKey; }
         }
 
         public static void Init()
