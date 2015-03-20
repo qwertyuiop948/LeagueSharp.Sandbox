@@ -13,13 +13,13 @@ namespace LeagueSharp.Sandbox
         public static Win32WndProc NewWndProc;
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr FindWindow(IntPtr ZeroOnly, string lpWindowName);
+        public static extern IntPtr FindWindow(IntPtr zeroOnly, string lpWindowName);
 
         [DllImport("user32")]
         public static extern IntPtr SetWindowLong(IntPtr hWnd, int nIndex, Win32WndProc newProc);
 
         [DllImport("user32")]
-        public static extern int CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, int Msg, int wParam, int lParam);
+        public static extern int CallWindowProc(IntPtr lpPrevWndFunc, IntPtr hWnd, int msg, int wParam, int lParam);
 
         public static void SubclassHWnd(IntPtr hWnd)
         {
@@ -39,6 +39,11 @@ namespace LeagueSharp.Sandbox
                 if (wParam == Bootstrap.ReloadAndRecompileKey)
                 {
                     Bootstrap.Recompile();
+                }
+
+                if (wParam == Bootstrap.UnloadKey)
+                {
+                    Bootstrap.Unload();
                 }
             }
 

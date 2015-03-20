@@ -7,8 +7,9 @@ namespace LeagueSharp.Sandbox
     public class Bootstrap
     {
         private static Domain _applicationDomain;
-        public static uint ReloadKey = 116U;
-        public static uint ReloadAndRecompileKey = 119U;
+        public static uint ReloadKey = 0x74;
+        public static uint ReloadAndRecompileKey = 0x76;
+        public static uint UnloadKey = 0x75;
 
         public static void Init()
         {
@@ -98,6 +99,7 @@ namespace LeagueSharp.Sandbox
                 {
                     ReloadKey = ServiceFactory.GetInterface<Configuration>().ReloadKey;
                     ReloadAndRecompileKey = ServiceFactory.GetInterface<Configuration>().ReloadAndRecompileKey;
+                    UnloadKey = ServiceFactory.GetInterface<Configuration>().UnloadKey;
                 }
                 catch (Exception e)
                 {
