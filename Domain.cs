@@ -17,8 +17,6 @@ namespace LeagueSharp.Sandbox
 
         public static Domain CreateProxy(string domainName)
         {
-            var apiConfig = ServiceFactory.GetInterface<Configuration>();
-
             if (string.IsNullOrEmpty(domainName))
             {
                 domainName = "Sandbox" + Guid.NewGuid().ToString("N") + "Domain";
@@ -29,19 +27,22 @@ namespace LeagueSharp.Sandbox
                 ApplicationName = domainName,
                 ApplicationBase = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\",
                 ShadowCopyFiles = "true",
-                CachePath = apiConfig.DataDirectory + "\\SandboxCache\\"
+                CachePath = Bootstrap.Config.DataDirectory + "\\SandboxCache\\"
             };
-            var grantSet = apiConfig.Permissions ?? new PermissionSet(PermissionState.None);
-            if (apiConfig.Permissions == null)
+
+            var grantSet = Bootstrap.Config.Permissions ?? new PermissionSet(PermissionState.None);
+
+            if (Bootstrap.Config.Permissions == null)
             {
                 grantSet.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
                 grantSet.AddPermission(
                     new FileIOPermission(
-                        FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, apiConfig.DataDirectory));
+                        FileIOPermissionAccess.Read | FileIOPermissionAccess.Write, Bootstrap.Config.DataDirectory));
             }
-            var fullTrustAssembly = typeof(Domain).Assembly.Evidence.GetHostEvidence<StrongName>();
 
+            var fullTrustAssembly = typeof (Domain).Assembly.Evidence.GetHostEvidence<StrongName>();
             var domain = AppDomain.CreateDomain(domainName, null, info, grantSet, fullTrustAssembly);
+
             domain.AssemblyResolve += (sender, args) =>
             {
                 var strArray = args.Name.Split(',');
@@ -57,6 +58,7 @@ namespace LeagueSharp.Sandbox
                     ? Assembly.Load(File.ReadAllBytes(resolvedPath))
                     : null;
             };
+
             domain.UnhandledException += (sender, args) =>
             {
                 ServiceFactory.GetInterface<ILoaderLogService>()
@@ -64,11 +66,11 @@ namespace LeagueSharp.Sandbox
                 Console.WriteLine(args.ExceptionObject.ToString());
                 Console.WriteLine("Press Enter to continue");
                 Console.ReadLine();
-                Environment.Exit(1);
+                Environment.Exit(1); // TODO: remove after testing is done
             };
 
             var handle = Activator.CreateInstanceFrom(
-                domain, typeof(Domain).Assembly.ManifestModule.FullyQualifiedName, typeof(Domain).FullName);
+                domain, typeof (Domain).Assembly.ManifestModule.FullyQualifiedName, typeof (Domain).FullName);
             var wrappedDomain = handle.Unwrap() as Domain;
 
             if (wrappedDomain != null)
@@ -76,34 +78,37 @@ namespace LeagueSharp.Sandbox
                 wrappedDomain.AppDomain = domain;
                 return wrappedDomain;
             }
+
             return null;
         }
 
-        public bool Load(string @string, string[] args)
+        public bool Load(string path, string[] args)
         {
-            if (LoadAssembly(@string, args))
+            if (LoadAssembly(path, args))
             {
                 return true;
             }
+
             ServiceFactory.GetInterface<ILoaderLogService>()
-                .ErrorFormat("[PID:%d] Failed to load assembly %s", Process.GetCurrentProcess().Id, @string);
+                .ErrorFormat("[PID:%d] Failed to load assembly %s", Process.GetCurrentProcess().Id, path);
+
             return false;
         }
 
-        private static bool LoadAssembly(string @string, IEnumerable args)
+        private static bool LoadAssembly(string path, IEnumerable args)
         {
             try
             {
-                if (File.Exists(@string))
+                if (File.Exists(path))
                 {
-                    var assembly = Assembly.Load(File.ReadAllBytes(@string));
+                    var assembly = Assembly.Load(File.ReadAllBytes(path));
                     if (assembly != null)
                     {
                         if (assembly.EntryPoint != null)
                         {
                             try
                             {
-                                assembly.EntryPoint.Invoke(null, new object[] { args });
+                                assembly.EntryPoint.Invoke(null, new object[] {args});
                             }
                             catch (Exception ex)
                             {
@@ -118,7 +123,7 @@ namespace LeagueSharp.Sandbox
             {
                 ServiceFactory.GetInterface<ILoaderLogService>()
                     .ErrorFormat(
-                        "[PID:%d] Failed to load assembly %s.\n%s", Process.GetCurrentProcess().Id, @string,
+                        "[PID:%d] Failed to load assembly %s.\n%s", Process.GetCurrentProcess().Id, path,
                         e.ToString());
             }
 
@@ -131,9 +136,10 @@ namespace LeagueSharp.Sandbox
             var extension = Path.GetExtension(name);
             var flag = extension != null &&
                        (Path.HasExtension(name) && (extension.ToLower() == ".dll" || extension.ToLower() == ".exe"));
+
             try
             {
-                var path1 = Path.Combine(ServiceFactory.GetInterface<Configuration>().DataDirectory, "Assemblies");
+                var path1 = Path.Combine(Bootstrap.Config.DataDirectory, "Assemblies");
                 foreach (var path2 in
                     Directory.EnumerateFiles(path1)
                         .Where(
@@ -145,6 +151,7 @@ namespace LeagueSharp.Sandbox
                     resolvedPath = path2;
                     return true;
                 }
+
                 foreach (var path2 in
                     Directory.EnumerateFiles(Assembly.GetExecutingAssembly().Location)
                         .Where(
@@ -156,6 +163,7 @@ namespace LeagueSharp.Sandbox
                     resolvedPath = path2;
                     return true;
                 }
+
                 foreach (var path3 in
                     Directory.EnumerateDirectories(path1)
                         .SelectMany(
