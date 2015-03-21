@@ -4,7 +4,7 @@ using LeagueSharp.Loader.Service;
 
 namespace LeagueSharp.Sandbox
 {
-    public class Bootstrap
+    public class Sandbox
     {
         public static Configuration Config;
         private static Domain _applicationDomain;
@@ -29,15 +29,24 @@ namespace LeagueSharp.Sandbox
             get { return Config == null ? 0x75 : Config.UnloadKey; }
         }
 
-        public static void Init()
+        public static int Bootstrap(string param)
         {
-            Config = ServiceFactory.GetInterface<ILoaderService>().GetConfiguration(Pid);
-            // TODO: login and configure core
+            try
+            {
+                Logs.InfoFormat("[PID:{0}] Sandbox.Bootstrap: Started ({1})", Pid, param);
+                Config = ServiceFactory.CreateProxy<ILoaderService>().GetConfiguration(Pid);
 
-            CreateApplicationDomain();
-            Load();
+                CreateApplicationDomain();
+                Load();
 
-            Input.SubclassHWnd(Process.GetCurrentProcess().MainWindowHandle);
+                Input.SubclassHWnd(Process.GetCurrentProcess().MainWindowHandle);
+            }
+            catch (Exception e)
+            {
+                Logs.ErrorFormat("[PID:{0}] Sandbox.Bootstrap: {1}", Pid, param);
+            }
+
+            return 0;
         }
 
         public static bool Load()
@@ -49,8 +58,8 @@ namespace LeagueSharp.Sandbox
 
             try
             {
-                var assemblies =
-                    ServiceFactory.GetInterface<ILoaderService>().GetAssemblyList(Process.GetCurrentProcess().Id);
+                Logs.InfoFormat("[PID:{0}] Sandbox.Load: Load Assemblies", Pid);
+                var assemblies = ServiceFactory.CreateProxy<ILoaderService>().GetAssemblyList(Pid);
 
                 foreach (var assembly in assemblies)
                 {
@@ -59,10 +68,7 @@ namespace LeagueSharp.Sandbox
             }
             catch (Exception e)
             {
-                ServiceFactory.GetInterface<ILoaderLogService>()
-                    .ErrorFormat("[PID:%d] Sandbox.Boostrap error at Load(): %s", Process.GetCurrentProcess().Id, e);
-                Console.WriteLine("Sandbox.Bootstrap has encountered an error:");
-                Console.WriteLine(e);
+                Logs.ErrorFormat("[PID:{0}] Sandbox.Load: {0}", Pid, e.ToString());
             }
             return true;
         }
@@ -80,15 +86,12 @@ namespace LeagueSharp.Sandbox
 
             try
             {
-                ServiceFactory.GetInterface<ILoaderService>().Recompile(Process.GetCurrentProcess().Id);
+                Logs.InfoFormat("[PID:{0}] Sandbox.Recompile: Request Recompile", Pid);
+                ServiceFactory.CreateProxy<ILoaderService>().Recompile(Process.GetCurrentProcess().Id);
             }
             catch (Exception e)
             {
-                ServiceFactory.GetInterface<ILoaderLogService>()
-                    .ErrorFormat(
-                        "[PID:%d] Sandbox.Boostrap error at Recompile(): %s", Process.GetCurrentProcess().Id, e);
-                Console.WriteLine("Sandbox.Bootstrap has encountered an error:");
-                Console.WriteLine(e);
+                Logs.ErrorFormat("[PID:{0}] Sandbox.Recompile: {1}", Pid, e.ToString());
             }
 
             CreateApplicationDomain();
@@ -104,7 +107,12 @@ namespace LeagueSharp.Sandbox
 
             try
             {
+                Logs.InfoFormat("[PID:{0}] Sandbox.Unload: Unload", Pid);
                 Domain.UnloadProxy(_applicationDomain);
+            }
+            catch (Exception e)
+            {
+                Logs.ErrorFormat("[PID:{0}] Sandbox.Unload: {1}", Pid, e.ToString());
             }
             finally
             {
@@ -121,16 +129,22 @@ namespace LeagueSharp.Sandbox
 
             try
             {
+                Logs.InfoFormat("[PID:{0}] Sandbox.CreateApplicationDomain: Create", Pid);
                 _applicationDomain = Domain.CreateProxy("SandboxDomain");
+
+                if (_applicationDomain == null)
+                {
+                    Logs.InfoFormat("[PID:{0}] Sandbox.CreateApplicationDomain: creation failed :(", Pid);
+                }
+                else
+                {
+                    Logs.ErrorFormat("[PID:{0}] Sandbox.CreateApplicationDomain: created #{1}", Pid,
+                        _applicationDomain.AppDomain.Id);
+                }
             }
             catch (Exception e)
             {
-                ServiceFactory.GetInterface<ILoaderLogService>()
-                    .ErrorFormat(
-                        "[PID:%d] Sandbox.Boostrap error at CreateApplicationDomain(): %s",
-                        Process.GetCurrentProcess().Id, e);
-                Console.WriteLine("Sandbox.Bootstrap has encountered an error:");
-                Console.WriteLine(e);
+                Logs.ErrorFormat("[PID:{0}] Sandbox.CreateApplicationDomain: {1}", Pid, e.ToString());
             }
         }
     }

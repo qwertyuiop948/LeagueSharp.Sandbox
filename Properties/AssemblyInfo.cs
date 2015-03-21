@@ -7,9 +7,9 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 
 [assembly: AssemblyTitle("LeagueSharp.Sandbox")]
-[assembly: AssemblyDescription("LeagueSharp Sandbox AppDomainManager")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("LeagueSharp")]
+[assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("LeagueSharp.Sandbox")]
 [assembly: AssemblyCopyright("Copyright © LeagueSharp 2015")]
 [assembly: AssemblyTrademark("LeagueSharp")]
@@ -38,4 +38,4 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: NeutralResourcesLanguage("en")]
+[assembly: NeutralResourcesLanguage("")]

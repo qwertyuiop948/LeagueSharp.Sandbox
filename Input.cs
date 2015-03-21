@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace LeagueSharp.Sandbox
@@ -23,6 +24,8 @@ namespace LeagueSharp.Sandbox
 
         public static void SubclassHWnd(IntPtr hWnd)
         {
+            Logs.InfoFormat("[PID:{0}] Sandbox.Bootstrap: Setup Keyboardhook ({1})", Sandbox.Pid,
+                Process.GetCurrentProcess().MainWindowHandle.ToString());
             NewWndProc = MyWndProc;
             OldWndProc = SetWindowLong(hWnd, GWL_WNDPROC, NewWndProc);
         }
@@ -31,19 +34,19 @@ namespace LeagueSharp.Sandbox
         {
             if (msg == WM_KEYUP)
             {
-                if (wParam == Bootstrap.ReloadKey)
+                if (wParam == Sandbox.ReloadKey)
                 {
-                    Bootstrap.Reload();
+                    Sandbox.Reload();
                 }
 
-                if (wParam == Bootstrap.ReloadAndRecompileKey)
+                if (wParam == Sandbox.ReloadAndRecompileKey)
                 {
-                    Bootstrap.Recompile();
+                    Sandbox.Recompile();
                 }
 
-                if (wParam == Bootstrap.UnloadKey)
+                if (wParam == Sandbox.UnloadKey)
                 {
-                    Bootstrap.Unload();
+                    Sandbox.Unload();
                 }
             }
 

@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>LeagueSharp.Sandbox</RootNamespace>
     <AssemblyName>LeagueSharp.Sandbox</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -35,24 +35,41 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>LeagueSharp.Sandbox.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LeagueSharp.Loader.Service">
-      <HintPath>..\..\..\..\..\..\Program Files (x86)\LeagueSharp\System\LeagueSharp.Loader.Service.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bootstrap.cs" />
+    <Compile Include="Logs.cs" />
+    <Compile Include="Sandbox.cs" />
     <Compile Include="Domain.cs" />
     <Compile Include="Input.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shared\Configuration.cs" />
+    <Compile Include="Shared\ILoaderLogService.cs" />
+    <Compile Include="Shared\ILoaderService.cs" />
+    <Compile Include="Shared\LoginCredentials.cs" />
+    <Compile Include="Shared\LSharpAssembly.cs" />
+    <Compile Include="Shared\ServiceFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="LeagueSharp.Sandbox.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /Y "$(TargetDir)$(TargetName).dll" "D:\GitHub\LeagueSharp.Loader.Original\bin\Release\System"
+copy /Y "$(TargetDir)$(TargetName).pdb" "D:\GitHub\LeagueSharp.Loader.Original\bin\Release\System"</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
