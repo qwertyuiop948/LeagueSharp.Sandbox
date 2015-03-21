@@ -9,12 +9,12 @@ namespace LeagueSharp.Sandbox
         {
             try
             {
-                ServiceFactory.CreateProxy<ILoaderLogService>().InfoFormat(s, args);
                 Console.WriteLine(s, args);
+                ServiceFactory.CreateProxy<ILoaderLogService>().InfoFormat(s, args);
             }
-            catch (Exception e)
+            catch
             {
-                Console.WriteLine(e);
+                // ignored
             }
         }
 
@@ -22,12 +22,12 @@ namespace LeagueSharp.Sandbox
         {
             try
             {
-                ServiceFactory.CreateProxy<ILoaderLogService>().Info(s);
                 Console.WriteLine(s);
+                ServiceFactory.CreateProxy<ILoaderLogService>().Info(s);
             }
-            catch (Exception e)
+            catch
             {
-                Console.WriteLine(e);
+                // ignored
             }
         }
 
@@ -35,12 +35,12 @@ namespace LeagueSharp.Sandbox
         {
             try
             {
-                ServiceFactory.CreateProxy<ILoaderLogService>().ErrorFormat(s, args);
                 Console.WriteLine(s, args);
+                ServiceFactory.CreateProxy<ILoaderLogService>().ErrorFormat(s, args);
             }
-            catch (Exception e)
+            catch
             {
-                Console.WriteLine(e);
+                // ignored
             }
         }
 
@@ -48,12 +48,12 @@ namespace LeagueSharp.Sandbox
         {
             try
             {
-                ServiceFactory.CreateProxy<ILoaderLogService>().Error(s);
                 Console.WriteLine(s);
+                ServiceFactory.CreateProxy<ILoaderLogService>().Error(s);
             }
-            catch (Exception e)
+            catch
             {
-                Console.WriteLine(e);
+                // ignored
             }
         }
     }
