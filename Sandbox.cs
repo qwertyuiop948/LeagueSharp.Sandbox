@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Diagnostics;
-using LeagueSharp.Loader.Service;
+using System.Runtime.InteropServices;
+using LeagueSharp.Sandbox.Shared;
 
 namespace LeagueSharp.Sandbox
 {
     public class Sandbox
     {
+        [DllImport("kernel32")]
+        static extern bool AllocConsole();
+
+        [DllImport("kernel32.dll", SetLastError = true, ExactSpelling = true)]
+        static extern bool FreeConsole();
+
         public static Configuration Config;
         private static Domain _applicationDomain;
 
@@ -14,17 +21,17 @@ namespace LeagueSharp.Sandbox
             get { return Process.GetCurrentProcess().Id; }
         }
 
-        public static uint ReloadAndRecompileKey
+        public static int ReloadAndRecompileKey
         {
             get { return Config == null ? 0x76 : Config.ReloadAndRecompileKey; }
         }
 
-        public static uint ReloadKey
+        public static int ReloadKey
         {
             get { return Config == null ? 0x74 : Config.ReloadKey; }
         }
 
-        public static uint UnloadKey
+        public static int UnloadKey
         {
             get { return Config == null ? 0x75 : Config.UnloadKey; }
         }
@@ -34,16 +41,13 @@ namespace LeagueSharp.Sandbox
             try
             {
                 Logs.InfoFormat("[PID:{0}] Sandbox.Bootstrap: Started ({1})", Pid, param);
-                Config = ServiceFactory.CreateProxy<ILoaderService>().GetConfiguration(Pid);
-
-                CreateApplicationDomain();
-                Load();
-
+                Reload();
                 Input.SubclassHWnd(Process.GetCurrentProcess().MainWindowHandle);
             }
             catch (Exception e)
             {
-                Logs.ErrorFormat("[PID:{0}] Sandbox.Bootstrap: {1}", Pid, param);
+                Logs.ErrorFormat("[PID:{0}] Sandbox.Bootstrap: {1}", Pid, e.ToString());
+                return 1;
             }
 
             return 0;
@@ -75,6 +79,27 @@ namespace LeagueSharp.Sandbox
 
         public static void Reload()
         {
+            try
+            {
+                Config = ServiceFactory.CreateProxy<ILoaderService>().GetConfiguration(Pid);
+                Hacks.AntiAFK = Config.AntiAfk;
+                Hacks.TowerRanges = Config.TowerRange;
+                Hacks.ZoomHack = Config.ExtendedZoom;
+
+                if (Config.Console)
+                {
+                    AllocConsole();
+                }
+                else
+                {
+                    FreeConsole();
+                }
+            }
+            catch(Exception e)
+            {
+                Logs.ErrorFormat("[PID:{0}] Sandbox.Reload: {1}", Pid, e.ToString());
+            }
+
             Unload();
             CreateApplicationDomain();
             Load();

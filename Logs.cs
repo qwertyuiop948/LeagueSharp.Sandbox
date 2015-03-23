@@ -1,5 +1,5 @@
 ﻿using System;
-using LeagueSharp.Loader.Service;
+using LeagueSharp.Sandbox.Shared;
 
 namespace LeagueSharp.Sandbox
 {
@@ -10,7 +10,7 @@ namespace LeagueSharp.Sandbox
             try
             {
                 Console.WriteLine(s, args);
-                ServiceFactory.CreateProxy<ILoaderLogService>().InfoFormat(s, args);
+                //ServiceFactory.CreateProxy<ILoaderLogService>().InfoFormat(s, args);
             }
             catch
             {
@@ -23,7 +23,7 @@ namespace LeagueSharp.Sandbox
             try
             {
                 Console.WriteLine(s);
-                ServiceFactory.CreateProxy<ILoaderLogService>().Info(s);
+                //ServiceFactory.CreateProxy<ILoaderLogService>().Info(s);
             }
             catch
             {
@@ -36,7 +36,7 @@ namespace LeagueSharp.Sandbox
             try
             {
                 Console.WriteLine(s, args);
-                ServiceFactory.CreateProxy<ILoaderLogService>().ErrorFormat(s, args);
+                //ServiceFactory.CreateProxy<ILoaderLogService>().ErrorFormat(s, args);
             }
             catch
             {
@@ -49,7 +49,7 @@ namespace LeagueSharp.Sandbox
             try
             {
                 Console.WriteLine(s);
-                ServiceFactory.CreateProxy<ILoaderLogService>().Error(s);
+                //ServiceFactory.CreateProxy<ILoaderLogService>().Error(s);
             }
             catch
             {

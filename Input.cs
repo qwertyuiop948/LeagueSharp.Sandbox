@@ -24,10 +24,9 @@ namespace LeagueSharp.Sandbox
 
         public static void SubclassHWnd(IntPtr hWnd)
         {
-            Logs.InfoFormat("[PID:{0}] Sandbox.Bootstrap: Setup Keyboardhook ({1})", Sandbox.Pid,
-                Process.GetCurrentProcess().MainWindowHandle.ToString());
             NewWndProc = MyWndProc;
             OldWndProc = SetWindowLong(hWnd, GWL_WNDPROC, NewWndProc);
+            Logs.InfoFormat("[PID:{0}] Sandbox.Bootstrap: Setup Keyboardhook ({1})", Sandbox.Pid, Process.GetCurrentProcess().MainWindowHandle.ToString());
         }
 
         public static int MyWndProc(IntPtr hWnd, int msg, int wParam, int lParam)

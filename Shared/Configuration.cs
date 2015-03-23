@@ -1,7 +1,7 @@
 ﻿using System.Runtime.Serialization;
 using System.Security;
 
-namespace LeagueSharp.Loader.Service
+namespace LeagueSharp.Sandbox.Shared
 {
     [DataContract]
     public class Configuration
@@ -19,24 +19,48 @@ namespace LeagueSharp.Loader.Service
         public bool ExtendedZoom { get; set; }
 
         [DataMember]
-        public uint MenuKey { get; set; }
+        public int MenuKey { get; set; }
 
         [DataMember]
-        public uint MenuToggleKey { get; set; }
+        public int MenuToggleKey { get; set; }
 
         [DataMember]
         public PermissionSet Permissions { get; set; }
 
         [DataMember]
-        public uint ReloadAndRecompileKey { get; set; }
+        public int ReloadAndRecompileKey { get; set; }
 
         [DataMember]
-        public uint ReloadKey { get; set; }
+        public int ReloadKey { get; set; }
 
         [DataMember]
         public bool TowerRange { get; set; }
 
         [DataMember]
-        public uint UnloadKey { get; set; }
+        public int UnloadKey { get; set; }
+
+        public override string ToString()
+        {
+            return string.Format("DataDirectory:{0}\n" +
+                                 "MenuKey:{1}\n" +
+                                 "MenuToggleKey:{2}\n" +
+                                 "AntiAfk:{3}\n" +
+                                 "Console:{4}\n" +
+                                 "ExtendedZoom:{5}\n" +
+                                 "TowerRange:{6}\n" +
+                                 "ReloadKey:{7}\n" +
+                                 "ReloadAndRecompileKey:{8}\n" +
+                                 "ReloadAndRecompileKey:{9}\n",
+                DataDirectory,
+                MenuKey,
+                MenuToggleKey,
+                AntiAfk,
+                Console,
+                ExtendedZoom,
+                TowerRange,
+                ReloadKey,
+                ReloadAndRecompileKey,
+                UnloadKey);
+        }
     }
 }

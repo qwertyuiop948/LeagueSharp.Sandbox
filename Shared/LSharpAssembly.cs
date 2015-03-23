@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace LeagueSharp.Loader.Service
+namespace LeagueSharp.Sandbox.Shared
 {
     [DataContract]
     public class LSharpAssembly

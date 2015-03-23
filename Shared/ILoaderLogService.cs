@@ -1,6 +1,6 @@
 using System.ServiceModel;
 
-namespace LeagueSharp.Loader.Service
+namespace LeagueSharp.Sandbox.Shared
 {
     [ServiceContract]
     public interface ILoaderLogService

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ServiceModel;
 
-namespace LeagueSharp.Loader.Service
+namespace LeagueSharp.Sandbox.Shared
 {
     public static class ServiceFactory
     {
